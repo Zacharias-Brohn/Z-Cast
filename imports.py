@@ -1,3 +1,5 @@
+import os
+import dotenv
 from fabric import Application
 from fabric.core.fabricator import Fabricator
 from fabric.hyprland.service import Hyprland

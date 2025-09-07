@@ -254,13 +254,15 @@ class Launcher( WaylandWindow ):
         return score
 
     def _load_app_usage( self ):
+        data_dir = os.getenv( "HOME" ) + "/.local/share/z-cast/"
         try:
-            with open( get_relative_path( "../../data/app_usage.json" ), "r" ) as f:
+            with open( data_dir + "usage.json", "r" ) as f:
                 return json.loads( f.read() )
         except ( FileNotFoundError, json.JSONDecodeError ):
             return {}
 
     def _save_app_usage( self ):
-        os.makedirs( get_relative_path( "../../data" ), exist_ok=True )
-        with open( get_relative_path( "../../data/app_usage.json" ), "w" ) as f:
+        data_dir = os.getenv( "HOME" ) + "/.local/share/z-cast/"
+        os.makedirs( data_dir, exist_ok=True )
+        with open( data_dir + "usage.json", "w" ) as f:
             f.write( json.dumps( self._app_usage ))

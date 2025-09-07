@@ -1,15 +1,12 @@
-import dotenv
-
 from imports import *
 from widgets.launcher.main import Launcher
 
 dotenv.load_dotenv()
 
+style_path = os.getenv( "HOME" ) + "/.config/z-cast/"
 
 def check_css( *_ ):
-    return app.set_stylesheet_from_file(
-            get_relative_path( "./css/main.css" )
-        )
+    return app.set_stylesheet_from_file( style_path + "z-cast.css" )
 
 
 if __name__ == "__main__":
@@ -20,10 +17,8 @@ if __name__ == "__main__":
     launcher.hide()
     app = Application()
 
-    monitor = monitor_file(get_relative_path( "./css" ))
+    monitor = monitor_file( style_path )
     monitor.connect( "changed", check_css )
-    app.set_stylesheet_from_file( "css/main.css" )
+    app.set_stylesheet_from_file( style_path + "z-cast.css" )
 
-    with open( get_relative_path( "debug/debug.txt" ), "w" ) as f:
-        f.write( "It is opened" )
     app.run()
