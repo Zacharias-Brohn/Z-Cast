@@ -1,6 +1,3 @@
-import os
-import operator
-import json
 from collections.abc import Iterator
 from imports import *
 
@@ -30,7 +27,7 @@ class Launcher( WaylandWindow ):
             notify_text=lambda entry, *_: self.arrange_viewport( entry.get_text() ),
             name="launcher-search",
             on_focus_in_event=lambda *_: (
-                self.details_label.set_label( "Lancast" )
+                self.details_label.set_label( "Z-Cast" )
             ),
         )
         self.search.connect( "key-press-event", self.on_search_key_press )
@@ -46,7 +43,7 @@ class Launcher( WaylandWindow ):
         )
 
         self.action_area = Box( name="launcher-area" )
-        self.details_label = Label( label="Lancast", name="launcher-details-label" )
+        self.details_label = Label( label="Z-Cast", name="launcher-details-label" )
         self.details_image = (
             Image(
                 icon_name="edit-undo-symbolic",
@@ -98,18 +95,11 @@ class Launcher( WaylandWindow ):
 
         self.viewport.children = []
 
-        filtered_apps = [
-            app
-            for app in self._all_apps
-            if query.casefold()
-            in (
-                ( app.display_name or "" )
-                + ( " " + app.name + " " )
-                + ( app.generic_name or "" )
-            ).casefold()
-        ]
-
         if not query:
+            filtered_apps = [
+                app
+                for app in self._all_apps
+            ]
             filtered_apps.sort(
                 key=lambda app: (
                     -(self._app_usage.get(app.name, 0) > 0),
@@ -118,10 +108,19 @@ class Launcher( WaylandWindow ):
                 ),
             )
         else:
-            filtered_apps.sort(
-                key=lambda app: self._score_app_match( app, query ),
-                reverse=True
-            )
+            scored_apps = [
+                ( self._score_app_match( app, query ), app )
+                for app in self._all_apps
+            ]
+
+            scored_apps = [ 
+                ( score, app ) for score, app in scored_apps if score >= 0.7
+            ]
+
+            scored_apps.sort( key=lambda x: x[0], reverse=True )
+
+            filtered_apps = [ app for score, app in scored_apps ]
+
 
         filtered_apps_iter = iter( filtered_apps )
 
@@ -217,40 +216,43 @@ class Launcher( WaylandWindow ):
         display_name_lower = (app.display_name or "").casefold()
         name_lower = app.name.casefold()
         generic_name_lower = (app.generic_name or "").casefold()
-        
-        score = 0
-        
-        # Exact matches get highest priority
+
+        score = 0.0
+
         if query_lower == display_name_lower:
-            score += 10000
+            score = 1.0
         elif query_lower == name_lower:
-            score += 9500
-        
-        # Starting with the query is next highest priority
+            score = 0.95
+
         elif display_name_lower.startswith(query_lower):
-            score += 8000
+            score = 0.9
         elif name_lower.startswith(query_lower):
-            score += 7500
-        
-        # Word matches (after space) are medium priority
+            score = 0.85
+
         elif f" {query_lower}" in display_name_lower:
-            score += 6000
+            score = 0.75
         elif f" {query_lower}" in name_lower:
-            score += 5500
-            
-        # Substring matches are lower priority
+            score = 0.7
+
         elif query_lower in display_name_lower:
-            score += 4000
+            score = 0.6
         elif query_lower in name_lower:
-            score += 3500
-            
-        # Generic name matches are lowest priority
+            score = 0.55
+
         elif query_lower in generic_name_lower:
-            score += 2000
-            
-        # App usage serves as a tiebreaker (scaled appropriately)
-        score += min(self._app_usage.get(app.name, 0), 1000)
-        
+            score = 0.4
+
+        else:
+            fuzz_ratio = max(
+                fuzz.ratio(query_lower, display_name_lower),
+                fuzz.ratio(query_lower, name_lower),
+                fuzz.ratio(query_lower, generic_name_lower),
+            )
+            score = fuzz_ratio / 100
+
+        usage_bonus = min(self._app_usage.get(app.name, 0) / 1000, 0.1)
+        score += usage_bonus
+
         return score
 
     def _load_app_usage( self ):
