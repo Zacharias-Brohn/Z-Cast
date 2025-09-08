@@ -18,6 +18,8 @@ class Launcher( WaylandWindow ):
         self._app_usage = self._load_app_usage()
         self._all_apps = get_desktop_applications()
         self._current_top_app = None
+        self.config_dir = os.getenv( "HOME" ) + "/.config/z-cast/"
+        self.data_dir = os.getenv( "HOME" ) + "/.local/share/z-cast/"
 
         self.viewport = Box( orientation="v", name="launcher-viewport" )
 
@@ -50,7 +52,7 @@ class Launcher( WaylandWindow ):
                 name="launcher-details-icon",
             )
             .build()
-            .set_pixel_size( 8 )
+            .set_pixel_size( 12 )
             .unwrap()
         )
         self.details = CenterBox(
@@ -256,15 +258,13 @@ class Launcher( WaylandWindow ):
         return score
 
     def _load_app_usage( self ):
-        data_dir = os.getenv( "HOME" ) + "/.local/share/z-cast/"
         try:
-            with open( data_dir + "usage.json", "r" ) as f:
+            with open( self.data_dir + "usage.json", "r" ) as f:
                 return json.loads( f.read() )
         except ( FileNotFoundError, json.JSONDecodeError ):
             return {}
 
     def _save_app_usage( self ):
-        data_dir = os.getenv( "HOME" ) + "/.local/share/z-cast/"
-        os.makedirs( data_dir, exist_ok=True )
-        with open( data_dir + "usage.json", "w" ) as f:
+        os.makedirs( self.data_dir, exist_ok=True )
+        with open( self.data_dir + "usage.json", "w" ) as f:
             f.write( json.dumps( self._app_usage ))

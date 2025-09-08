@@ -49,3 +49,7 @@ pip install -r requirements.txt
 # Run the application
 python3 main.py
 ```
+
+## Inspiration
+[Spacerice](https://github.com/SlumberDemon/dotfiles)
+[Fabric](https://github.com/Fabric-Development/fabric)
