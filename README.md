@@ -51,5 +51,5 @@ python3 main.py
 ```
 
 ## Inspiration
-[Spacerice](https://github.com/SlumberDemon/dotfiles)
-[Fabric](https://github.com/Fabric-Development/fabric)
+- [Spacerice](https://github.com/SlumberDemon/dotfiles)
+- [Fabric](https://github.com/Fabric-Development/fabric)
