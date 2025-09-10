@@ -2,6 +2,7 @@ import os
 import json
 import operator
 import dotenv
+import shutil
 from rapidfuzz import fuzz
 from fabric import Application
 from fabric.core.fabricator import Fabricator
