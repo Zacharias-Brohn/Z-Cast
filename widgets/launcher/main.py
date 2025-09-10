@@ -14,12 +14,12 @@ class Launcher( WaylandWindow ):
             visible=False,
             all_visible=False,
         )
-        self._arranger_handler: int = 0
-        self._app_usage = self._load_app_usage()
-        self._all_apps = get_desktop_applications()
-        self._current_top_app = None
         self.config_dir = os.getenv( "HOME" ) + "/.config/z-cast/"
         self.data_dir = os.getenv( "HOME" ) + "/.local/share/z-cast/"
+        self._arranger_handler: int = 0
+        self._app_usage = self._load_app_usage()
+        self._all_apps = get_desktop_applications(True)
+        self._current_top_app = None
 
         self.viewport = Box( orientation="v", name="launcher-viewport" )
 
@@ -32,7 +32,6 @@ class Launcher( WaylandWindow ):
                 self.details_label.set_label( "Z-Cast" )
             ),
         )
-        self.search.connect( "key-press-event", self.on_search_key_press )
 
         self.apps = ScrolledWindow(
             min_content_size=( 600, 800 ),
@@ -78,11 +77,13 @@ class Launcher( WaylandWindow ):
         )
         self.show_all()
 
+        self.search.connect( "key-press-event", self.on_search_key_press )
         self.connect( "key-release-event", self.on_key )
 
     def on_key( self, entry, event_key ):
         if event_key.keyval == 65307:
             self.toggle()
+            return
 
     def on_search_key_press( self, entry, event_key ):
         if event_key.keyval == 65293:
