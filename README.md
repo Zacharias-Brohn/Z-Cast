@@ -30,6 +30,7 @@ sudo zypper install gtk3-devel cairo-devel gtk-layer-shell-devel libgirepository
 sudo dnf install gtk3-devel cairo-devel gtk-layer-shell-devel glib2 gobject-introspection-devel python3-devel python-pip python3-gobject python3-cairo python3-loguru pkgconf
 
 ```
+You will also need to install [fabric-cli](https://github.com/Fabric-Development/fabric-cli).
 
 It is recommended to use virtual environments (venv), such as `uv` or `conda`,
 built-in python venv works as well.
@@ -49,6 +50,15 @@ pip install -r requirements.txt
 # Run the application
 python3 main.py
 ```
+
+## Usage
+
+When you first launch `main.py` nothing will show up, this is normal. To open
+the launcher you'll need to run:
+```
+fabric-cli execute default "launcher.toggle()"
+```
+The easiest way to open the launcher is to set this command as a keybind.
 
 ## Inspiration
 - [Spacerice](https://github.com/SlumberDemon/dotfiles)
