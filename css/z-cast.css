@@ -85,12 +85,12 @@ scrollbar slider {
 }
 
 #launcher-app:hover {
-    background-color: alpha(@hover-focus, 0.2);
-    border: 1px solid alpha(@border-color, 0.2);
+    background-color: transparent;
+    border: 1px solid transparent;
 }
 
 #launcher-app:focus {
-    background-color: alpha(@hover-focus, 0.4);
+    background-color: alpha(@hover-focus, 0.2);
     border: 1px solid alpha(@border-color, 0.2);
 }
 
