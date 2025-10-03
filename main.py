@@ -9,8 +9,9 @@ def setup_directories():
     if not os.path.exists( style_path ):
         os.makedirs( style_path, exist_ok=True )
 
-        project_css = get_relative_path( "./css/" )
-        for css in os.listdir( project_css ):
+    project_css = get_relative_path( "./css/" )
+    for css in os.listdir( project_css ):
+        if not os.path.exists( style_path + css ):
             shutil.copy( project_css + css, style_path )
 
     config_file = style_path + "config.json"
