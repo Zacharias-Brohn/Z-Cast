@@ -3,6 +3,12 @@ import json
 import operator
 import dotenv
 import shutil
+
+import gi
+gi.require_version("Gdk", "3.0")
+from gi.repository import Gdk
+
+from collections.abc import Iterator
 from rapidfuzz import fuzz
 from fabric import Application
 from fabric.core.fabricator import Fabricator

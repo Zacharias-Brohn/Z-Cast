@@ -1,6 +1,4 @@
-from collections.abc import Iterator
 from imports import *
-
 
 class Launcher( WaylandWindow ):
     def __init__( self ):
@@ -20,6 +18,7 @@ class Launcher( WaylandWindow ):
         self._app_usage = self._load_app_usage()
         self._all_apps = get_desktop_applications(True)
         self._current_top_app = None
+        self._currently_hovered_button = None
 
         self.viewport = Box( orientation="v", name="launcher-viewport" )
 
@@ -156,7 +155,7 @@ class Launcher( WaylandWindow ):
         return False
 
     def bake_application_slot( self, app: DesktopApp, **kwargs ) -> Button:
-        return Button(
+        button = Button(
             name="launcher-app",
             child=Box(
                 orientation="h",
@@ -179,15 +178,44 @@ class Launcher( WaylandWindow ):
                     ),
                 ],
             ),
-            on_focus_in_event=lambda *_: (
-                self.details_label.set_label( "Open Application" )
-            ),
             on_clicked=lambda *_: (
                 self.launch_app( app ),
                 self.hide(),
             ),
             **kwargs,
         )
+        button.add_events( Gdk.EventMask.POINTER_MOTION_MASK )
+
+        button.connect( "motion-notify-event", lambda btn, *_: btn.grab_focus() if not btn.has_focus() else None )
+        button.connect( "focus-in-event", lambda btn, *_: self.details_label.set_label("Open Application") )
+        button.connect( "focus-out-event", lambda btn, *_: self.details_label.set_label("Z-Cast") )
+
+        button.connect( "key-press-event", self.on_app_key_press )
+
+        return button
+
+    def on_app_key_press( self, button, event_key ):
+        keyval = event_key.keyval
+        
+        # Handle backspace
+        if keyval == 65288:
+            current_text = self.search.get_text()
+            if current_text:
+                self.search.set_text(current_text[:-1])
+            self.search.grab_focus()
+            self.search.set_position(-1)
+            return True
+        
+        # Handle printable characters
+        if 32 <= keyval <= 126:
+            char = chr(keyval)
+            current_text = self.search.get_text()
+            self.search.set_text(current_text + char)
+            self.search.grab_focus()
+            self.search.set_position(-1)
+            return True
+        
+        return False
 
     def launch_app( self, app: DesktopApp ):
         self._app_usage[ app.name ] = self._app_usage.get( app.name, 0 ) + 1
@@ -208,10 +236,14 @@ class Launcher( WaylandWindow ):
         )
 
     def toggle( self ):
-        self._all_apps = get_desktop_applications()
+        new_apps = get_desktop_applications()
+        apps_changed = len( new_apps ) != len( self._all_apps )
+        self._all_apps = new_apps
         self.search.set_text( "" )
         self.search.grab_focus()
-        self.arrange_viewport()
+        if not self.viewport.children or apps_changed:
+            self.arrange_viewport()
+        self.apps.get_vadjustment().set_value( 0 )
         self.set_visible( not self.is_visible() )
 
     def _score_app_match( self, app: DesktopApp, query: str ) -> float:
