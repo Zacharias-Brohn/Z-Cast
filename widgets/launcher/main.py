@@ -17,6 +17,8 @@ class Launcher( WaylandWindow ):
         self._arranger_handler: int = 0
         self._app_usage = self._load_app_usage()
         self._all_apps = get_desktop_applications(True)
+        self._config = self._load_config()
+        self._launch_prefix = self._config.get( "launch_prefix", "" )
         self._current_top_app = None
         self._currently_hovered_button = None
 
@@ -226,9 +228,12 @@ class Launcher( WaylandWindow ):
             if app.command_line
             else None
         )
+
+        full_command = f"{ self._launch_prefix } { command }" if self._launch_prefix else command
+
         (
             exec_shell_command_async(
-                f"uwsm-app -S out -- { command }",
+                f"{ full_command }",
                 lambda *_: print( f"Launched { app.name }" ),
             )
             if command
@@ -289,6 +294,13 @@ class Launcher( WaylandWindow ):
         score += usage_bonus
 
         return score
+
+    def _load_config( self ):
+        try:
+            with open( self.config_dir + "config.json", "r" ) as f:
+                return json.loads( f.read() )
+        except ( FileNotFoundError, json.JSONDecodeError ):
+            return {}
 
     def _load_app_usage( self ):
         try:

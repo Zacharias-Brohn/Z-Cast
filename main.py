@@ -16,6 +16,10 @@ def setup_directories():
 def check_css( *_ ):
     return app.set_stylesheet_from_file( style_path + "z-cast.css" )
 
+def restart_app():
+    python = sys.executable
+    subprocess.Popen( [ python ] + sys.argv, start_new_session=True )
+    sys.exit(0)
 
 if __name__ == "__main__":
     launcher = Launcher()

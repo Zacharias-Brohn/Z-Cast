@@ -3,6 +3,8 @@ import json
 import operator
 import dotenv
 import shutil
+import sys
+import subprocess
 
 import gi
 gi.require_version("Gdk", "3.0")
