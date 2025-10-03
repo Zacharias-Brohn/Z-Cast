@@ -10,6 +10,7 @@ Z-Cast is an application launcher designed specifically for Wayland compositors 
 
 - CSS styling in `$HOME/.config/Z-Cast` (use GTK_DEBUG=interactive)
 - Usage-based app list order
+- Barebones config file in json-format
 
 ## Planned Features
 
@@ -59,6 +60,19 @@ the launcher you'll need to run:
 fabric-cli execute default "launcher.toggle()"
 ```
 The easiest way to open the launcher is to set this command as a keybind.
+
+## Config
+The config file should be next to the stylesheet here: `$HOME/.config/z-cast/config.json`
+
+Currently there's only one option to set in the config file:
+```
+{
+    "launch-prefix": ""
+}
+```
+Giving this no value launches your apps without a prefix, as expected. This
+setting is useful for users (like me) that use, for example, uwsm and need to
+set `uwsm-app` as a prefix.
 
 ## Inspiration
 - [Spacerice](https://github.com/SlumberDemon/dotfiles)

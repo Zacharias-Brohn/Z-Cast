@@ -13,6 +13,14 @@ def setup_directories():
         for css in os.listdir( project_css ):
             shutil.copy( project_css + css, style_path )
 
+    config_file = style_path + "config.json"
+    if not os.path.exists( config_file ):
+        default_config = {
+            "launch_prefix": ""
+        }
+        with open( config_file, "w" ) as f:
+            json.dump( default_config, f, indent=4 )
+
 def check_css( *_ ):
     return app.set_stylesheet_from_file( style_path + "z-cast.css" )
 

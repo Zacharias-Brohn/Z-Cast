@@ -18,7 +18,7 @@ class Launcher( WaylandWindow ):
         self._app_usage = self._load_app_usage()
         self._all_apps = get_desktop_applications(True)
         self._config = self._load_config()
-        self._launch_prefix = self._config.get( "launch_prefix", "" )
+        self._launch_prefix = self._config.get( "launch_prefix" )
         self._current_top_app = None
         self._currently_hovered_button = None
 
@@ -106,9 +106,9 @@ class Launcher( WaylandWindow ):
             ]
             filtered_apps.sort(
                 key=lambda app: (
-                    -(self._app_usage.get(app.name, 0) > 0),
-                    -self._app_usage.get(app.name, 0),
-                    (app.display_name or app.name).lower()
+                    -( self._app_usage.get( app.name, 0 ) > 0 ),
+                    -self._app_usage.get( app.name, 0 ),
+                    ( app.display_name or app.name ).lower()
                 ),
             )
         else:
@@ -130,7 +130,7 @@ class Launcher( WaylandWindow ):
 
         should_resize = operator.length_hint( filtered_apps_iter ) == len( self._all_apps )
 
-        self._current_top_app = filtered_apps[0] if filtered_apps else None
+        self._current_top_app = filtered_apps[ 0 ] if filtered_apps else None
 
         self._arranger_handler = idle_add(
             lambda *args: self.add_next_application( *args )
@@ -229,12 +229,12 @@ class Launcher( WaylandWindow ):
             else None
         )
 
-        full_command = f"{ self._launch_prefix } { command }" if self._launch_prefix else command
+        full_command = f"{ self._launch_prefix } { command }".strip() if self._launch_prefix else command
+        print( full_command )
 
         (
             exec_shell_command_async(
                 f"{ full_command }",
-                lambda *_: print( f"Launched { app.name }" ),
             )
             if command
             else None
