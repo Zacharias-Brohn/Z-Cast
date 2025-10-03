@@ -27,7 +27,12 @@ def check_css( *_ ):
 
 def restart_app():
     python = sys.executable
-    subprocess.Popen( [ python ] + sys.argv, start_new_session=True )
+    subprocess.Popen( [ python ] + sys.argv, 
+        start_new_session=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        stdin=subprocess.DEVNULL
+    )
     sys.exit(0)
 
 if __name__ == "__main__":
