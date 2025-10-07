@@ -1,5 +1,6 @@
-![img](./assets/launcher.png)
-
+<div align="center">
+    <img src="/assets/launcher.png" width="400">
+</div>
 # Z-Cast - Application Launcher for Wayland
 
 Z-Cast is an application launcher designed specifically for Wayland compositors on Linux. Written in Python using [Fabric](https://github.com/Fabric-Development/fabric).
