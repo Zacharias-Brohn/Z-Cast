@@ -1,4 +1,4 @@
-[img](./assets/launcher.png)
+![img](./assets/launcher.png)
 
 # Z-Cast - Application Launcher for Wayland
 
