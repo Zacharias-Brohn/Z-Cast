@@ -103,7 +103,7 @@ scrollbar slider {
 }
 
 #launcher-app-label {
-    color: @font-alt;
+    color: @font;
     font-size: 10px;
     margin-right: 14px;
 }
