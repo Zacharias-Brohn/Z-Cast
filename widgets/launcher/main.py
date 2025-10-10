@@ -203,16 +203,16 @@ class Launcher( WaylandWindow ):
         if keyval == 65288:
             current_text = self.search.get_text()
             if current_text:
-                self.search.set_text(current_text[:-1])
+                self.search.set_text( current_text[ :-1 ])
             self.search.grab_focus()
-            self.search.set_position(-1)
+            self.search.set_position( -1 )
             return True
         
         # Handle printable characters
         if 32 <= keyval <= 126:
-            char = chr(keyval)
+            char = chr( keyval )
             current_text = self.search.get_text()
-            self.search.set_text(current_text + char)
+            self.search.set_text( current_text + char )
             self.search.grab_focus()
             self.search.set_position(-1)
             return True
@@ -253,9 +253,9 @@ class Launcher( WaylandWindow ):
 
     def _score_app_match( self, app: DesktopApp, query: str ) -> float:
         query_lower = query.casefold()
-        display_name_lower = (app.display_name or "").casefold()
+        display_name_lower = ( app.display_name or "" ).casefold()
         name_lower = app.name.casefold()
-        generic_name_lower = (app.generic_name or "").casefold()
+        generic_name_lower = ( app.generic_name or "" ).casefold()
 
         score = 0.0
 
@@ -264,14 +264,14 @@ class Launcher( WaylandWindow ):
         elif query_lower == name_lower:
             score = 0.95
 
-        elif display_name_lower.startswith(query_lower):
+        elif display_name_lower.startswith( query_lower ):
             score = 0.9
-        elif name_lower.startswith(query_lower):
+        elif name_lower.startswith( query_lower ):
             score = 0.85
 
-        elif f" {query_lower}" in display_name_lower:
+        elif f" { query_lower }" in display_name_lower:
             score = 0.75
-        elif f" {query_lower}" in name_lower:
+        elif f" { query_lower }" in name_lower:
             score = 0.7
 
         elif query_lower in display_name_lower:
@@ -284,13 +284,13 @@ class Launcher( WaylandWindow ):
 
         else:
             fuzz_ratio = max(
-                fuzz.ratio(query_lower, display_name_lower),
-                fuzz.ratio(query_lower, name_lower),
-                fuzz.ratio(query_lower, generic_name_lower),
+                fuzz.ratio( query_lower, display_name_lower ),
+                fuzz.ratio( query_lower, name_lower ),
+                fuzz.ratio( query_lower, generic_name_lower ),
             )
             score = fuzz_ratio / 100
 
-        usage_bonus = min(self._app_usage.get(app.name, 0) / 1000, 0.1)
+        usage_bonus = min( self._app_usage.get(app.name, 0) / 1000, 0.1 )
         score += usage_bonus
 
         return score
